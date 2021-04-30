@@ -1,0 +1,42 @@
+Sub to_csv()
+Dim InputCsvFile As Variant
+Dim InputFolder As String
+Dim OutputFolder As String
+Dim ChooseFolder As FileDialog
+
+Application.DisplayAlerts = False
+Application.ScreenUpdating = False
+Application.EnableEvents = False
+Application.Calculation = xlCalculationManual
+
+'Set target input
+Set ChooseFolder = Application.FileDialog(msoFileDialogFolderPicker)
+ChooseFolder.Title = "Select Input Path"
+ChooseFolder.AllowMultiSelect = False
+                
+If ChooseFolder.Show <> -1 Then GoTo NextCode
+InputFolder = ChooseFolder.SelectedItems(1)
+'Set target output
+Set ChooseFolder = Application.FileDialog(msoFileDialogFolderPicker)
+ChooseFolder.Title = "Select Output Path"
+ChooseFolder.AllowMultiSelect = False
+                
+If ChooseFolder.Show <> -1 Then GoTo NextCode
+OutputFolder = ChooseFolder.SelectedItems(1)
+
+'Loop for convert xlsx to csv
+        
+NextCode:
+     
+    InputCsvFile = Dir(InputFolder & "\*.xlsx")
+    While InputCsvFile <> ""
+    Workbooks.OpenText Filename:=InputFolder & "\" & InputCsvFile, DataType:=xlDelimited, Comma:=True
+    
+    ActiveWorkbook.SaveAs Filename:=OutputFolder & "\" & Replace(ActiveWorkbook.Name, ".xlsx", ".csv"), FileFormat:=xlCSV, CreateBackup:=False
+     
+    ActiveWorkbook.Close
+    InputCsvFile = Dir
+    Wend
+    
+MsgBox "DONE"
+End Sub
